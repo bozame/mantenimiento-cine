@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Equipos</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Equipos</h1>
+
+        <h2>Listado de Equipos</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Sala</th>
+                <th>Estado Funcional</th>
+                <th>Acciones</th>
+            </tr>
+            {% for eq in equipos %}
+            <tr>
+                <td>{{ eq.id_equipo }}</td>
+                <td>{{ eq.nombre }}</td>
+                <td>{{ eq.id_tipo_eq.nombre }}</td>
+                <td>{{ eq.id_sala.numero }}</td>
+                <td>{{ eq.id_estado_func.nombre }}</td>
+                <td>
+                    <button onclick="editarEquipo('{{ eq.id_equipo }}', '{{ eq.nombre }}', '{{ eq.id_tipo_eq.id_maestra }}', '{{ eq.id_sala.id_sala }}', '{{ eq.id_estado_func.id_maestra }}')">Editar</button>
+                    <a href="{% url 'eliminar_equipo' eq.id_equipo %}" onclick="return confirm('¿Seguro que quieres eliminar este equipo?');">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- FORMULARIO CREAR / EDITAR -->
+        <h2 id="form-title">Agregar Equipo</h2>
+        <form method="POST" action="{% url 'guardar_equipo' %}">
+            {% csrf_token %}
+            <input type="hidden" name="id_equipo" id="id_equipo">
+
+            <label>Nombre:</label><br>
+            <input type="text" name="nombre" id="nombre" required><br><br>
+
+            <label>Tipo:</label><br>
+            <select name="id_tipo_eq" id="id_tipo_eq" required>
+                <option value="">Seleccione</option>
+                {% for t in maestra %}
+                    <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Sala:</label><br>
+            <select name="id_sala" id="id_sala_select" required>
+                <option value="">Seleccione</option>
+                {% for s in salas %}
+                    <option value="{{ s.id_sala }}">{{ s.numero }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Estado Funcional:</label><br>
+            <select name="id_estado_func" id="id_estado_func" required>
+                <option value="">Seleccione</option>
+                {% for e in maestra %}
+                    <option value="{{ e.id_maestra }}">{{ e.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="ocultarFormulario()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- SCRIPT PARA EDITAR Y REINICIAR FORMULARIO -->
+    <script>
+        function editarEquipo(id, nombre, tipo, sala, estado) {
+            document.getElementById('form-title').innerText = 'Editar Equipo';
+            document.getElementById('id_equipo').value = id;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('id_tipo_eq').value = tipo;
+            document.getElementById('id_sala_select').value = sala;
+            document.getElementById('id_estado_func').value = estado;
+            window.scrollTo(0,0);
+        }
+
+        function ocultarFormulario() {
+            document.getElementById('form-title').innerText = 'Agregar Equipo';
+            document.getElementById('id_equipo').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('id_tipo_eq').value = '';
+            document.getElementById('id_sala_select').value = '';
+            document.getElementById('id_estado_func').value = '';
+        }
+    </script>
+</body>
+</html>

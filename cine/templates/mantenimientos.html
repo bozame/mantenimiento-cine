@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Mantenimientos</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Mantenimientos</h1>
+
+        <!-- LISTADO -->
+        <h2>Listado de Mantenimientos</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Equipo</th>
+                <th>Supervisor</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+                <th>Duración (hrs)</th>
+            </tr>
+            {% for mant in mantenimientos %}
+            <tr>
+                <td>{{ mant.id_mantenimiento }}</td>
+                <td>{{ mant.fecha_inicio }}</td>
+                <td>{{ mant.fecha_fin|default:"-" }}</td>
+                <td>{{ mant.id_tipo_mant.nombre }}</td>
+                <td>{{ mant.id_estado_mant.nombre }}</td>
+                <td>{{ mant.id_equipo.nombre }}</td>
+                <td>{{ mant.id_supervisor.nombre }}</td>
+                <td>{{ mant.descripcion|default:"-" }}</td>
+                <td>
+                    <button onclick="editarMantenimiento('{{ mant.id_mantenimiento }}', '{{ mant.fecha_inicio }}', '{{ mant.fecha_fin|default_if_none:'' }}', '{{ mant.id_tipo_mant.id_maestra }}', '{{ mant.id_estado_mant.id_maestra }}', '{{ mant.id_equipo.id_equipo }}', '{{ mant.id_supervisor.id_empleado }}', '{{ mant.descripcion|default_if_none:'' }}')">Editar</button>
+                    <a href="{% url 'eliminar_mantenimiento' mant.id_mantenimiento %}" onclick="return confirm('¿Seguro que quieres eliminar este mantenimiento?');">Eliminar</a>
+                </td>
+                <td>{{ mant.duracion }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2 id="form-title">Agregar Mantenimiento</h2>
+        <form method="POST" action="{% url 'guardar_mantenimiento' %}">
+            {% csrf_token %}
+            <input type="hidden" name="id_mantenimiento" id="id_mantenimiento">
+
+            <label>Fecha Inicio:</label><br>
+            <input type="datetime-local" name="fecha_inicio" id="fecha_inicio" required><br><br>
+
+            <label>Fecha Fin:</label><br>
+            <input type="datetime-local" name="fecha_fin" id="fecha_fin"><br><br>
+
+
+            <label>Tipo de Mantenimiento:</label><br>
+            <select name="id_tipo_mant" id="id_tipo_mant" required>
+                <option value="">Seleccione</option>
+                {% for t in maestra %}
+                    <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Estado:</label><br>
+            <select name="id_estado_mant" id="id_estado_mant" required>
+                <option value="">Seleccione</option>
+                {% for e in maestra %}
+                    <option value="{{ e.id_maestra }}">{{ e.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Equipo:</label><br>
+            <select name="id_equipo" id="id_equipo" required>
+                <option value="">Seleccione</option>
+                {% for eq in equipos %}
+                    <option value="{{ eq.id_equipo }}">{{ eq.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Supervisor:</label><br>
+            <select name="id_supervisor" id="id_supervisor" required>
+                <option value="">Seleccione</option>
+                {% for sup in empleados %}
+                    <option value="{{ sup.id_empleado }}">{{ sup.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Descripción:</label><br>
+            <textarea name="descripcion" id="descripcion"></textarea><br><br>
+
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="ocultarFormulario()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- SCRIPT PARA EDITAR Y REINICIAR FORMULARIO -->
+    <script>
+        function editarMantenimiento(id, fecha_inicio, fecha_fin, tipo, estado, equipo, supervisor, descripcion) {
+            document.getElementById('form-title').innerText = 'Editar Mantenimiento';
+            document.getElementById('id_mantenimiento').value = id;
+            document.getElementById('fecha_inicio').value = fecha_inicio;
+            document.getElementById('fecha_fin').value = fecha_fin;
+            document.getElementById('id_tipo_mant').value = tipo;
+            document.getElementById('id_estado_mant').value = estado;
+            document.getElementById('id_equipo').value = equipo;
+            document.getElementById('id_supervisor').value = supervisor;
+            document.getElementById('descripcion').value = descripcion;
+            window.scrollTo(0,0);
+        }
+
+        function ocultarFormulario() {
+            document.getElementById('form-title').innerText = 'Agregar Mantenimiento';
+            document.getElementById('id_mantenimiento').value = '';
+            document.getElementById('fecha_inicio').value = '';
+            document.getElementById('fecha_fin').value = '';
+            document.getElementById('id_tipo_mant').value = '';
+            document.getElementById('id_estado_mant').value = '';
+            document.getElementById('id_equipo').value = '';
+            document.getElementById('id_supervisor').value = '';
+            document.getElementById('descripcion').value = '';
+        }
+    </script>
+</body>
+</html>

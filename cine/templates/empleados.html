@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Empleados</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Empleados</h1>
+
+        <h2>Listado de Empleados</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Turno</th>
+                <th>Cédula</th>
+                <th>Acciones</th>
+            </tr>
+            {% for emp in empleados %}
+            <tr>
+                <td>{{ emp.id_empleado }}</td>
+                <td>{{ emp.nombre }}</td>
+                <td>{{ emp.id_rol.nombre }}</td>
+                <td>{{ emp.id_turno.nombre }}</td>
+                <td>{{ emp.cedula }}</td>
+                <td>
+                    <button onclick="editarEmpleado('{{ emp.id_empleado }}', '{{ emp.nombre }}', '{{ emp.id_rol.id_maestra }}', '{{ emp.id_turno.id_maestra }}', '{{ emp.cedula }}')">Editar</button>
+                    <a href="{% url 'eliminar_empleado' emp.id_empleado %}" onclick="return confirm('¿Seguro que quieres eliminar este empleado?');">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- FORMULARIO CREAR / EDITAR -->
+        <h2 id="form-title">Agregar Empleado</h2>
+        <form method="POST" action="{% url 'guardar_empleado' %}">
+            {% csrf_token %}
+            <input type="hidden" name="id_empleado" id="id_empleado">
+
+            <label>Nombre:</label><br>
+            <input type="text" name="nombre" id="nombre" required><br><br>
+
+            <label>Rol:</label><br>
+            <select name="id_rol" id="id_rol" required>
+                <option value="">Seleccione</option>
+                {% for r in maestra %}
+                    <option value="{{ r.id_maestra }}">{{ r.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Turno:</label><br>
+            <select name="id_turno" id="id_turno" required>
+                <option value="">Seleccione</option>
+                {% for t in maestra %}
+                    <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Cédula:</label><br>
+            <input type="text" name="cedula" id="cedula" required><br><br>
+
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="ocultarFormulario()">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- SCRIPT PARA EDITAR Y REINICIAR FORMULARIO -->
+    <script>
+        function editarEmpleado(id, nombre, rol, turno, cedula) {
+            document.getElementById('form-title').innerText = 'Editar Empleado';
+            document.getElementById('id_empleado').value = id;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('id_rol').value = rol;
+            document.getElementById('id_turno').value = turno;
+            document.getElementById('cedula').value = cedula;
+            window.scrollTo(0,0);
+        }
+
+        function ocultarFormulario() {
+            document.getElementById('form-title').innerText = 'Agregar Empleado';
+            document.getElementById('id_empleado').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('id_rol').value = '';
+            document.getElementById('id_turno').value = '';
+            document.getElementById('cedula').value = '';
+        }
+    </script>
+</body>
+</html>

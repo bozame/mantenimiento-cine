@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Mantenimiento de Cine</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Mantenimiento del Cine</h1>
+
+        <div style="margin-bottom: 15px;">
+            <a href="{% url 'vistas' %}" class="btn" style="background-color: #03396c; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">Ir a Vistas Personalizadas</a>
+        </div>
+
+        <!-- Contenedor -->
+        <div class="tabs">
+            <button class="tablink active" onclick="openTab(event, 'salas')">Salas</button>
+            <button class="tablink" onclick="openTab(event, 'equipos')">Equipos</button>
+            <button class="tablink" onclick="openTab(event, 'empleados')">Empleados</button>
+            <button class="tablink" onclick="openTab(event, 'mantenimientos')">Mantenimientos</button>
+            <button class="tablink" onclick="openTab(event, 'asignaciones')">Asignaciones</button>
+            <button class="tablink" onclick="openTab(event, 'maestra')">Maestra</button>
+        </div>
+
+
+        <div class="tab-container">
+            <!-- SALAS -->
+            <div id="salas" class="tabcontent" style="display:block;">
+                <a href="{% url 'salas' %}" class="btn">Gestionar Salas</a>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Número</th>
+                        <th>Capacidad</th>
+                        <th>Estado Funcional</th>
+                    </tr>
+                    {% for sala in salas %}
+                    <tr>
+                        <td>{{ sala.id_sala }}</td>
+                        <td>{{ sala.numero }}</td>
+                        <td>{{ sala.capacidad }}</td>
+                        <td>{{ sala.id_estado_func.nombre }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- EQUIPOS -->
+            <div id="equipos" class="tabcontent">
+            <a href="{% url 'equipos' %}" class="btn">Gestionar Equipos</a>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Sala</th>
+                        <th>Estado Funcional</th>
+                    </tr>
+                    {% for eq in equipos %}
+                    <tr>
+                        <td>{{ eq.id_equipo }}</td>
+                        <td>{{ eq.nombre }}</td>
+                        <td>{{ eq.id_tipo_eq.nombre }}</td>
+                        <td>{{ eq.id_sala.numero }}</td>
+                        <td>{{ eq.id_estado_func.nombre }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- EMPLEADOS -->
+            <div id="empleados" class="tabcontent">
+                <a href="{% url 'empleados' %}" class="btn">Gestionar Empleados</a>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                        <th>Turno</th>
+                        <th>Cédula</th>
+                    </tr>
+                    {% for emp in empleados %}
+                    <tr>
+                        <td>{{ emp.id_empleado }}</td>
+                        <td>{{ emp.nombre }}</td>
+                        <td>{{ emp.id_rol.nombre }}</td>
+                        <td>{{ emp.id_turno.nombre }}</td>
+                        <td>{{ emp.cedula }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- MANTENIMIENTOS -->
+            <div id="mantenimientos" class="tabcontent">
+            <a href="{% url 'mantenimientos' %}" class="btn">Gestionar Mantenimientos</a>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Equipo</th>
+                        <th>Supervisor</th>
+                        <th>Descripción</th>
+                    </tr>
+                    {% for mant in mantenimientos %}
+                    <tr>
+                        <td>{{ mant.id_mantenimiento }}</td>
+                        <td>{{ mant.fecha_inicio }}</td>
+                        <td>{{ mant.fecha_fin|default:"-" }}</td>
+                        <td>{{ mant.id_tipo_mant.nombre }}</td>
+                        <td>{{ mant.id_estado_mant.nombre }}</td>
+                        <td>{{ mant.id_equipo.nombre }}</td>
+                        <td>{{ mant.id_supervisor.nombre }}</td>
+                        <td>{{ mant.descripcion|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- ASIGNACIONES -->
+            <div id="asignaciones" class="tabcontent">
+            <a href="{% url 'asignaciones' %}" class="btn">Gestionar Asignaciones</a>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Mantenimiento</th>
+                        <th>Empleado</th>
+                    </tr>
+                    {% for asig in asignaciones %}
+                    <tr>
+                        <td>{{ asig.id_asignacion }}</td>
+                        <td>{{ asig.id_mantenimiento.id_mantenimiento }}</td>
+                        <td>{{ asig.id_empleado.nombre }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <!-- MAESTRA -->
+            <div id="maestra" class="tabcontent">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Padre</th>
+                    </tr>
+                    {% for m in maestra %}
+                    <tr>
+                        <td>{{ m.id_maestra }}</td>
+                        <td>{{ m.nombre }}</td>
+                        <td>{% if m.padre %}{{ m.padre.nombre }}{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>

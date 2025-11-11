@@ -1,11 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, F
 from .models import Asignaciones, Equipos, Empleados, Mantenimientos, Salas, Maestra
-from .forms import SalaForm
 from django.contrib import messages
 from django.utils import timezone
 from datetime import datetime
-from .logica import duracion_mantenimiento
+from .logica import duracion_mantenimiento, siguiente_estado
 
 def index(request):
     empleados = Empleados.objects.all()
@@ -23,7 +22,7 @@ def index(request):
         'maestra': maestra
     })
 
-
+# Muestra cada técnico con los mantenimientos que tiene asignados y sus supervisores.
 def vista_mant_tecnicos(request):
     datos = (
         Asignaciones.objects
@@ -40,19 +39,7 @@ def vista_mant_tecnicos(request):
     )
     return render(request, 'vista_mant_tecnicos.html', {'datos': datos})
 
-def vista_estado_equipos(request):
-    datos = (
-        Equipos.objects
-        .select_related('id_sala', 'id_estado_func')
-        .values(
-            'id_equipo',
-            equipo=models.F('nombre'),
-            sala=models.F('id_sala__numero'),
-            estado=models.F('id_estado_func__nombre'),
-        )
-    )
-    return render(request, 'vista_estado_equipos.html', {'datos': datos})
-
+# cuenta cuántos mantenimientos ha supervisado cada supervisor
 def vista_supervisores_mantenimientos(request):
     datos = (
         Empleados.objects
@@ -267,6 +254,41 @@ def guardar_mantenimiento(request):
 def eliminar_mantenimiento(request, id_mantenimiento):
     mant = get_object_or_404(Mantenimientos, id_mantenimiento=id_mantenimiento)
     mant.delete()
+    return redirect('mantenimientos')
+
+
+def finalizar_mantenimiento(request, id_mantenimiento):
+    mantenimiento = get_object_or_404(Mantenimientos, id_mantenimiento=id_mantenimiento)
+
+    if request.method == 'POST':
+        fecha_fin_str = request.POST.get('fecha_fin')
+        descripcion = request.POST.get('descripcion')
+
+        # Si no se pasa una fecha, usamos la actual
+        if fecha_fin_str:
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin_str, '%Y-%m-%dT%H:%M'))
+        else:
+            fecha_fin = timezone.now()
+
+        mantenimiento.fecha_fin = fecha_fin
+        mantenimiento.descripcion = descripcion
+        mantenimiento.save()
+
+        return redirect('mantenimientos')
+
+    return render(request, 'finalizar_mantenimiento.html', {
+        'mantenimiento': mantenimiento
+    })
+
+def comenzar_mantenimiento(request, id_mantenimiento):
+    mantenimiento = get_object_or_404(Mantenimientos, id_mantenimiento=id_mantenimiento)
+
+    # Solo si tiene estado preventivo (id_estado_mant_id == 15)
+    if mantenimiento.id_estado_mant_id == 15:
+        mantenimiento.fecha_inicio = timezone.now()
+        mantenimiento.id_estado_mant_id = siguiente_estado(mantenimiento.id_estado_mant_id)
+        mantenimiento.save()
+
     return redirect('mantenimientos')
 
 

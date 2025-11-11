@@ -8,70 +8,71 @@
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 </head>
 <body>
-<div class="container">
-    <h1>Gestión de Salas</h1>
+    <a href="{% url 'index'%}">Volver a inicio</a>
+    <div class="container">
+        <h1>Gestión de Salas</h1>
 
-    <!-- Listado de Salas -->
-    <h2>Listado de Salas</h2>
-    <table border="1" cellspacing="0" cellpadding="5">
-        <tr>
-            <th>ID</th>
-            <th>Número</th>
-            <th>Capacidad</th>
-            <th>Estado Funcional</th>
-            <th>Acciones</th>
-        </tr>
-        {% for sala in salas %}
-        <tr>
-            <td>{{ sala.id_sala }}</td>
-            <td>{{ sala.numero }}</td>
-            <td>{{ sala.capacidad }}</td>
-            <td>{{ sala.id_estado_func.nombre }}</td>
-            <td>
-                <button onclick="editarSala({{ sala.id_sala }}, '{{ sala.numero }}', '{{ sala.capacidad }}', {{ sala.id_estado_func.id_maestra }})">Editar</button>
-                <a href="{% url 'eliminar_sala' sala.id_sala %}" onclick="return confirm('¿Seguro que quieres eliminar esta sala?');">Eliminar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <!-- crear / editar -->
-    <h2 id="form-title">Agregar Sala</h2>
-    <form method="POST" action="{% url 'guardar_sala' %}">
-        {% csrf_token %}
-        <input type="hidden" name="id_sala" id="id_sala">
-        <label>Número:</label><br>
-        <input type="number" name="numero" id="numero" required><br><br>
-        <label>Capacidad:</label><br>
-        <input type="number" name="capacidad" id="capacidad" required><br><br>
-        <label>Estado Funcional:</label><br>
-        <select name="id_estado_func" id="id_estado_func" required>
-            <option value="">Seleccione</option>
-            {% for estado in maestra %}
-                <option value="{{ estado.id_maestra }}">{{ estado.nombre }}</option>
+        <!-- Listado de Salas -->
+        <h2>Listado de Salas</h2>
+        <table border="1" cellspacing="0" cellpadding="5">
+            <tr>
+                <th>ID</th>
+                <th>Número</th>
+                <th>Capacidad</th>
+                <th>Estado Funcional</th>
+                <th>Acciones</th>
+            </tr>
+            {% for sala in salas %}
+            <tr>
+                <td>{{ sala.id_sala }}</td>
+                <td>{{ sala.numero }}</td>
+                <td>{{ sala.capacidad }}</td>
+                <td>{{ sala.id_estado_func.nombre }}</td>
+                <td>
+                    <button onclick="editarSala({{ sala.id_sala }}, '{{ sala.numero }}', '{{ sala.capacidad }}', {{ sala.id_estado_func.id_maestra }})">Editar</button>
+                    <a href="{% url 'eliminar_sala' sala.id_sala %}" onclick="return confirm('¿Seguro que quieres eliminar esta sala?');">Eliminar</a>
+                </td>
+            </tr>
             {% endfor %}
-        </select><br><br>
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="resetForm()">Cancelar</button>
-    </form>
-</div>
+        </table>
 
-<script>
-function editarSala(id, numero, capacidad, estado_id) {
-    document.getElementById('form-title').innerText = 'Editar Sala';
-    document.getElementById('id_sala').value = id;
-    document.getElementById('numero').value = numero;
-    document.getElementById('capacidad').value = capacidad;
-    document.getElementById('id_estado_func').value = estado_id;
-}
+        <!-- crear / editar -->
+        <h2 id="form-title">Agregar Sala</h2>
+        <form method="POST" action="{% url 'guardar_sala' %}">
+            {% csrf_token %}
+            <input type="hidden" name="id_sala" id="id_sala">
+            <label>Número:</label><br>
+            <input type="number" name="numero" id="numero" required><br><br>
+            <label>Capacidad:</label><br>
+            <input type="number" name="capacidad" id="capacidad" required><br><br>
+            <label>Estado Funcional:</label><br>
+            <select name="id_estado_func" id="id_estado_func" required>
+                <option value="">Seleccione</option>
+                {% for estado in maestra %}
+                    <option value="{{ estado.id_maestra }}">{{ estado.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+            <button type="submit">Guardar</button>
+            <button type="button" onclick="resetForm()">Cancelar</button>
+        </form>
+    </div>
 
-function resetForm() {
-    document.getElementById('form-title').innerText = 'Agregar Sala';
-    document.getElementById('id_sala').value = '';
-    document.getElementById('numero').value = '';
-    document.getElementById('capacidad').value = '';
-    document.getElementById('id_estado_func').value = '';
-}
-</script>
+    <script>
+    function editarSala(id, numero, capacidad, estado_id) {
+        document.getElementById('form-title').innerText = 'Editar Sala';
+        document.getElementById('id_sala').value = id;
+        document.getElementById('numero').value = numero;
+        document.getElementById('capacidad').value = capacidad;
+        document.getElementById('id_estado_func').value = estado_id;
+    }
+
+    function resetForm() {
+        document.getElementById('form-title').innerText = 'Agregar Sala';
+        document.getElementById('id_sala').value = '';
+        document.getElementById('numero').value = '';
+        document.getElementById('capacidad').value = '';
+        document.getElementById('id_estado_func').value = '';
+    }
+    </script>
 </body>
 </html>

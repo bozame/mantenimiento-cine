@@ -2,8 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.index, name='index'),
     path('vista-mant-tecnicos/', views.vista_mant_tecnicos, name='vista_mant_tecnicos'),
-    path('vista-estado-equipos/', views.vista_estado_equipos, name='vista_estado_equipos'),
     path('vista-supervisores/', views.vista_supervisores_mantenimientos, name='vista_supervisores_mantenimientos'),
 
     path('salas/', views.salas, name='salas'),
@@ -21,6 +21,9 @@ urlpatterns = [
     path('mantenimientos/', views.mantenimientos, name='mantenimientos'),
     path('mantenimientos/guardar/', views.guardar_mantenimiento, name='guardar_mantenimiento'),
     path('mantenimientos/eliminar/<int:id_mantenimiento>/', views.eliminar_mantenimiento, name='eliminar_mantenimiento'),
+    path('mantenimientos/finalizar/<int:id_mantenimiento>/', views.finalizar_mantenimiento, name='finalizar_mantenimiento'),
+    path('mantenimientos/comenzar/<int:id_mantenimiento>/', views.comenzar_mantenimiento, name='comenzar_mantenimiento'),
+
 
     path('asignaciones/', views.asignaciones, name='asignaciones'),
     path('asignaciones/guardar/', views.guardar_asignacion, name='guardar_asignacion'),

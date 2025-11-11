@@ -99,17 +99,17 @@
     </style>
 </head>
 <body>
+    <a href="{% url 'index'%}">Volver a inicio</a>
     
     <h1>Dashboard de Vistas</h1>
 
     <div class="tab">
         <button class="tablinks" onclick="openTab(event, 'mant_tecnicos')" id="defaultOpen">Mant. Técnicos</button>
-        <button class="tablinks" onclick="openTab(event, 'estado_equipos')">Estado Equipos</button>
         <button class="tablinks" onclick="openTab(event, 'supervisores')">Supervisores</button>
     </div>
 
     <div id="mant_tecnicos" class="tabcontent">
-        <h2>Mantenimientos por Técnicos</h2>
+        <h2>Técnicos y sus mantemientos</h2>
         <table>
             <tr>
                 <th>ID Asignación</th>
@@ -127,27 +127,6 @@
                 <td>{{ m.equipo }}</td>
                 <td>{{ m.tipo_mantenimiento }}</td>
                 <td>{{ m.estado_mantenimiento }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-
-    <!-- estado equipos -->
-    <div id="estado_equipos" class="tabcontent">
-        <h2>Estado de Equipos</h2>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Equipo</th>
-                <th>Sala</th>
-                <th>Estado</th>
-            </tr>
-            {% for e in estado_equipos %}
-            <tr>
-                <td>{{ e.id_equipo }}</td>
-                <td>{{ e.equipo }}</td>
-                <td>{{ e.sala }}</td>
-                <td>{{ e.estado }}</td>
             </tr>
             {% endfor %}
         </table>

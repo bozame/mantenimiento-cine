@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Finalizar Mantenimiento</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <p><strong>ID:</strong> {{ mantenimiento.id_mantenimiento }}</p>
+        <p><strong>Equipo:</strong> {{ mantenimiento.id_equipo.nombre }}</p>
+        <p><strong>Tipo:</strong> {{ mantenimiento.id_tipo_mant.nombre }}</p>
+        <p><strong>Inicio:</strong> {{ mantenimiento.fecha_inicio }}</p>
+
+        <label>Fecha de finalización:</label><br>
+        <input type="datetime-local" name="fecha_fin"
+            value="{{ mantenimiento.fecha_fin|date:'Y-m-d\\TH:i' }}"><br><br>
+
+        <label>Descripción final:</label><br>
+        <textarea name="descripcion" rows="4" cols="50">{{ mantenimiento.descripcion|default_if_none:'' }}</textarea><br><br>
+
+        <button type="submit">Guardar</button>
+        <a href="{% url 'mantenimientos' %}">Cancelar</a>
+    </form>
+
+</body>
+</html>

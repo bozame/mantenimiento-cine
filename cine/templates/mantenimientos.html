@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 </head>
 <body>
+    <a href="{% url 'index'%}">Volver a inicio</a>
     <div class="container">
         <h1>Gestión de Mantenimientos</h1>
 
@@ -23,6 +24,7 @@
                 <th>Supervisor</th>
                 <th>Descripción</th>
                 <th>Acciones</th>
+                <th>Finalizar</th> 
                 <th>Duración (hrs)</th>
             </tr>
             {% for mant in mantenimientos %}
@@ -37,7 +39,25 @@
                 <td>{{ mant.descripcion|default:"-" }}</td>
                 <td>
                     <button onclick="editarMantenimiento('{{ mant.id_mantenimiento }}', '{{ mant.fecha_inicio }}', '{{ mant.fecha_fin|default_if_none:'' }}', '{{ mant.id_tipo_mant.id_maestra }}', '{{ mant.id_estado_mant.id_maestra }}', '{{ mant.id_equipo.id_equipo }}', '{{ mant.id_supervisor.id_empleado }}', '{{ mant.descripcion|default_if_none:'' }}')">Editar</button>
-                    <a href="{% url 'eliminar_mantenimiento' mant.id_mantenimiento %}" onclick="return confirm('¿Seguro que quieres eliminar este mantenimiento?');">Eliminar</a>
+                    <a href="{% url 'eliminar_mantenimiento' mant.id_mantenimiento %}">
+                        <button onclick="return confirm('¿Seguro que quieres eliminar este mantenimiento?');">Eliminar</button>
+                    </a>
+                </td>
+                <td>
+                    {% if not mant.fecha_fin %}
+                        <a href="{% url 'finalizar_mantenimiento' mant.id_mantenimiento %}">
+                            <button>Finalizar</button></a>
+                    {% else %}
+                        <span style="color: gray;">Finalizado</span>
+                    {% endif %}
+                    
+                    {% if mant.id_estado_mant.id_maestra == 15 %}
+                        <a href="{% url 'comenzar_mantenimiento' mant.id_mantenimiento %}">
+                            <button>
+                            ▶️ Comenzar
+                            </button>
+                        </a>
+                    {% endif %}
                 </td>
                 <td>{{ mant.duracion }}</td>
             </tr>

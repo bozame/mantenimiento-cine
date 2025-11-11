@@ -7,55 +7,59 @@
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
 </head>
 <body>
-    <h1>Asignaciones</h1>
+    <div class="container">
+        <h1>Asignaciones</h1>
 
-    <table border="1" cellspacing="0" cellpadding="5">
-        <tr>
-            <th>ID</th>
-            <th>Mantenimiento</th>
-            <th>Empleado</th>
-            <th>Acciones</th>
-        </tr>
-        {% for asignacion in asignaciones %}
-        <tr>
-            <td>{{ asignacion.id_asignacion }}</td>
-            <td>{{ asignacion.id_mantenimiento.id_mantenimiento }}</td>
-            <td>{{ asignacion.id_empleado.nombre }}</td>
-            <td>
-                <button onclick="editarAsignacion({{ asignacion.id_asignacion }}, {{ asignacion.id_mantenimiento.id_mantenimiento }}, {{ asignacion.id_empleado.id_empleado }})">Editar</button>
-                <a href="{% url 'eliminar_asignacion' asignacion.id_asignacion %}" onclick="return confirm('¿Seguro que quieres eliminar esta asignación?');">Eliminar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <hr>
-
-    <!-- FORM CREAR / EDITAR -->
-    <h2 id="form-title">Agregar Asignación</h2>
-    <form method="POST" action="{% url 'guardar_asignacion' %}">
-        {% csrf_token %}
-        <input type="hidden" name="id_asignacion" id="id_asignacion">
-
-        <label>Mantenimiento:</label><br>
-        <select name="id_mantenimiento" id="id_mantenimiento" required>
-            <option value="">Seleccione</option>
-            {% for m in mantenimientos %}
-                <option value="{{ m.id_mantenimiento }}">{{ m.id_mantenimiento }}</option>
+        <table border="1" cellspacing="0" cellpadding="5">
+            <tr>
+                <th>ID</th>
+                <th>Mantenimiento</th>
+                <th>Empleado</th>
+                <th>Acciones</th>
+            </tr>
+            {% for asignacion in asignaciones %}
+            <tr>
+                <td>{{ asignacion.id_asignacion }}</td>
+                <td>{{ asignacion.id_mantenimiento.id_mantenimiento }}</td>
+                <td>{{ asignacion.id_empleado.nombre }}</td>
+                <td>
+                    <button onclick="editarAsignacion({{ asignacion.id_asignacion }}, {{ asignacion.id_mantenimiento.id_mantenimiento }}, {{ asignacion.id_empleado.id_empleado }})">Editar</button>
+                    <a href="{% url 'eliminar_asignacion' asignacion.id_asignacion %}">
+                        <button onclick="return confirm('¿Seguro que quieres eliminar esta asignación?');">Eliminar</button>
+                    </a>
+                </td>
+            </tr>
             {% endfor %}
-        </select><br><br>
+        </table>
 
-        <label>Empleado:</label><br>
-        <select name="id_empleado" id="id_empleado" required>
-            <option value="">Seleccione</option>
-            {% for e in empleados %}
-                <option value="{{ e.id_empleado }}">{{ e.nombre }}</option>
-            {% endfor %}
-        </select><br><br>
+        <hr>
 
-        <button type="submit" id="btn-submit">Guardar</button>
-        <button type="button" onclick="ocultarFormulario()">Cancelar</button>
-    </form>
+        <!-- FORM CREAR / EDITAR -->
+        <h2 id="form-title">Agregar Asignación</h2>
+        <form method="POST" action="{% url 'guardar_asignacion' %}">
+            {% csrf_token %}
+            <input type="hidden" name="id_asignacion" id="id_asignacion">
+
+            <label>Mantenimiento:</label><br>
+            <select name="id_mantenimiento" id="id_mantenimiento" required>
+                <option value="">Seleccione</option>
+                {% for m in mantenimientos %}
+                    <option value="{{ m.id_mantenimiento }}">{{ m.id_mantenimiento }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label>Empleado:</label><br>
+            <select name="id_empleado" id="id_empleado" required>
+                <option value="">Seleccione</option>
+                {% for e in empleados %}
+                    <option value="{{ e.id_empleado }}">{{ e.nombre }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <button type="submit" id="btn-submit">Guardar</button>
+            <button type="button" onclick="ocultarFormulario()">Cancelar</button>
+        </form>
+    </div>
 
     <script>
         function editarAsignacion(id_asignacion, mantenimiento_id, empleado_id) {

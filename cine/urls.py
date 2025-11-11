@@ -27,5 +27,5 @@ urlpatterns = [
     path('asignaciones/eliminar/<int:id_asignacion>/', views.eliminar_asignacion, name='eliminar_asignacion'),
 
     path('vistas/', views.vistas, name='vistas'),
-
+    path('crear_mantenimiento_con_asignacion/', views.crear_mantenimiento_con_asignacion, name='crear_mantenimiento_con_asignacion'),
 ]

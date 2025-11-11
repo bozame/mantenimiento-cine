@@ -66,8 +66,11 @@ def vista_supervisores_mantenimientos(request):
 # ----------------- CRUD SALAS--------------------
 def salas(request):
     salas = Salas.objects.all()
-    maestra = Maestra.objects.all()  # Para el select de estado funcional
-    return render(request, 'salas.html', {'salas': salas, 'maestra': maestra})
+    maestra = Maestra.objects.filter(padre=1)
+    return render(request, 'salas.html', {
+        'salas': salas,
+        'maestra': maestra
+        })
 
 # crear o editar
 def guardar_sala(request):
@@ -101,11 +104,13 @@ def eliminar_sala(request, id_sala):
 def equipos(request):
     equipos = Equipos.objects.all()
     salas = Salas.objects.all()
-    tipos_estado = Maestra.objects.all()
+    tipos_eq = Maestra.objects.filter(padre=2)
+    estado_func = Maestra.objects.filter(padre=1)
     return render(request, 'equipos.html', {
         'equipos': equipos,
         'salas': salas,
-        'maestra': tipos_estado,
+        'tipos_eq': tipos_eq,
+        'estado_func': estado_func,
     })
 
 def guardar_equipo(request):
@@ -146,8 +151,13 @@ def eliminar_equipo(request, id_equipo):
 # ------------------- CRUD EMPLEADOS ----------------------
 def empleados(request):
     empleados = Empleados.objects.all()
-    maestra = Maestra.objects.all()
-    return render(request, 'empleados.html', {'empleados': empleados, 'maestra': maestra})
+    rol = Maestra.objects.filter(padre=6)
+    turno = Maestra.objects.filter(padre=5)
+    return render(request, 'empleados.html', {
+        'empleados': empleados,
+        'rol':rol,
+        'turno':turno,
+        })
 
 def guardar_empleado(request):
     if request.method == 'POST':
@@ -182,7 +192,7 @@ def eliminar_empleado(request, id_empleado):
 def mantenimientos(request):
     mantenimientos_obj = Mantenimientos.objects.select_related(
         'id_tipo_mant', 'id_estado_mant', 'id_equipo', 'id_supervisor'
-    ).all()
+    ).order_by('id_mantenimiento') 
 
     mantenimientos = []
     for m in mantenimientos_obj:
@@ -198,12 +208,14 @@ def mantenimientos(request):
             'duracion': duracion_mantenimiento(m.id_mantenimiento)  # <-- calculamos la duración
         })
 
-    maestra = Maestra.objects.all()
+    estado_mant = Maestra.objects.filter(padre=3)
+    tipo_mant = Maestra.objects.filter(padre=4)
     equipos = Equipos.objects.all() 
-    empleados = Empleados.objects.all()
+    empleados = Empleados.objects.filter(id_rol=24)
     return render(request, 'mantenimientos.html', {
         'mantenimientos': mantenimientos,
-        'maestra': maestra,
+        'estado_mant': estado_mant,
+        'tipo_mant': tipo_mant,
         'equipos': equipos,
         'empleados': empleados
     })
@@ -340,3 +352,62 @@ def vistas(request):
     }
 
     return render(request, 'vistas.html', context)
+
+
+from django.contrib import messages
+
+def crear_mantenimiento_con_asignacion(request):
+    if request.method == 'POST':
+        fecha_inicio_str = request.POST.get('fecha_inicio')
+        fecha_fin_str = request.POST.get('fecha_fin')
+        id_tipo_mant = request.POST.get('id_tipo_mant')
+        id_estado_mant = request.POST.get('id_estado_mant')
+        id_equipo = request.POST.get('id_equipo')
+        id_supervisor = request.POST.get('id_supervisor')
+        descripcion = request.POST.get('descripcion')
+        id_empleado = request.POST.get('id_empleado')
+
+        fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio_str, '%Y-%m-%dT%H:%M'))
+        fecha_fin = None
+        if fecha_fin_str:
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin_str, '%Y-%m-%dT%H:%M'))
+
+        tipo_mant = get_object_or_404(Maestra, id_maestra=id_tipo_mant)
+        estado_mant = get_object_or_404(Maestra, id_maestra=id_estado_mant)
+        equipo = get_object_or_404(Equipos, id_equipo=id_equipo)
+        supervisor = get_object_or_404(Empleados, id_empleado=id_supervisor)
+        empleado = get_object_or_404(Empleados, id_empleado=id_empleado)
+
+        # guardar mantenimiento
+        mantenimiento = Mantenimientos.objects.create(
+            id_tipo_mant=tipo_mant,
+            id_estado_mant=estado_mant,
+            id_equipo=equipo,
+            id_supervisor=supervisor,
+            fecha_inicio=fecha_inicio,
+            fecha_fin=fecha_fin,
+            descripcion=descripcion
+        )
+
+        # guardar asignación
+        Asignaciones.objects.create(
+            id_mantenimiento=mantenimiento,
+            id_empleado=empleado
+        )
+        
+        messages.success(request, '✅ Mantenimiento y asignación creados correctamente.')
+
+        return redirect('crear_mantenimiento_con_asignacion')  # redirige al mismo formulario
+
+    #get
+    equipos = Equipos.objects.all()
+    empleados = Empleados.objects.all()
+    tipos = Maestra.objects.filter(padre__nombre='tipo_mantenimiento')
+    estados = Maestra.objects.filter(padre__nombre='estado_mantenimiento')
+
+    return render(request, 'crear_mantenimiento.html', {
+        'equipos': equipos,
+        'empleados': empleados,
+        'tipos': tipos,
+        'estados': estados
+    })

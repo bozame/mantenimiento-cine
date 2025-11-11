@@ -59,7 +59,7 @@
             <label>Tipo de Mantenimiento:</label><br>
             <select name="id_tipo_mant" id="id_tipo_mant" required>
                 <option value="">Seleccione</option>
-                {% for t in maestra %}
+                {% for t in tipo_mant %}
                     <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
                 {% endfor %}
             </select><br><br>
@@ -67,7 +67,7 @@
             <label>Estado:</label><br>
             <select name="id_estado_mant" id="id_estado_mant" required>
                 <option value="">Seleccione</option>
-                {% for e in maestra %}
+                {% for e in estado_mant %}
                     <option value="{{ e.id_maestra }}">{{ e.nombre }}</option>
                 {% endfor %}
             </select><br><br>

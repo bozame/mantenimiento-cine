@@ -31,3 +31,13 @@ def nombre_equipo_mantenimiento(id_mant: int) -> str:
         return mant.id_equipo.nombre
     except Mantenimientos.DoesNotExist:
         return ""
+
+from .models import Asignaciones
+
+# retorna false si habían asignaciones relacionadas a un mantenimiento, si no existe nada retorna false
+def eliminar_asignaciones(id_mantenimiento):
+    asignaciones = Asignaciones.objects.filter(id_mantenimiento=id_mantenimiento)
+    if asignaciones.exists():
+        asignaciones.delete()
+        return True
+    return False

@@ -47,7 +47,7 @@
             <label>Rol:</label><br>
             <select name="id_rol" id="id_rol" required>
                 <option value="">Seleccione</option>
-                {% for r in maestra %}
+                {% for r in rol %}
                     <option value="{{ r.id_maestra }}">{{ r.nombre }}</option>
                 {% endfor %}
             </select><br><br>
@@ -55,7 +55,7 @@
             <label>Turno:</label><br>
             <select name="id_turno" id="id_turno" required>
                 <option value="">Seleccione</option>
-                {% for t in maestra %}
+                {% for t in turno %}
                     <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
                 {% endfor %}
             </select><br><br>

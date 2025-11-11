@@ -47,7 +47,7 @@
             <label>Tipo:</label><br>
             <select name="id_tipo_eq" id="id_tipo_eq" required>
                 <option value="">Seleccione</option>
-                {% for t in maestra %}
+                {% for t in tipos_eq %}
                     <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
                 {% endfor %}
             </select><br><br>
@@ -63,7 +63,7 @@
             <label>Estado Funcional:</label><br>
             <select name="id_estado_func" id="id_estado_func" required>
                 <option value="">Seleccione</option>
-                {% for e in maestra %}
+                {% for e in estado_func %}
                     <option value="{{ e.id_maestra }}">{{ e.nombre }}</option>
                 {% endfor %}
             </select><br><br>

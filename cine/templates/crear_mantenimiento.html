@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuevo Mantenimiento</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f8ff;
+      margin: 0;
+      padding: 0;
+      color: #0d1b2a;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      padding: 40px 50px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #03396c;
+      margin-bottom: 30px;
+    }
+
+    h3 {
+      color: #03396c;
+      margin-top: 20px;
+      border-bottom: 2px solid #e1ecf7;
+      padding-bottom: 5px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 15px;
+      color: #1b263b;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-top: 5px;
+      border: 1px solid #ccd6f6;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: #f9fbff;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #005f99;
+      outline: none;
+      background-color: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .divider {
+      margin: 30px 0;
+      border: 0;
+      border-top: 2px solid #e9f0fa;
+    }
+
+    .btn-primary {
+      background-color: #005f99;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #034f84;
+    }
+
+    .btn-secondary {
+      background-color: #e6e6e6;
+      color: #333;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background-color 0.25s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #d0d0d0;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    /* 🎉 Estilo para mensajes */
+    .alert {
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 15px;
+      margin-bottom: 25px;
+      text-align: center;
+      animation: fadein 0.5s;
+    }
+
+    .alert-success {
+      background-color: #e7f7ed;
+      border-left: 5px solid #2e8b57;
+      color: #155724;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Registrar nuevo mantenimiento</h1>
+
+    <form method="POST" action="{% url 'crear_mantenimiento_con_asignacion' %}">
+      {% csrf_token %}
+
+      <h3>Datos del mantenimiento</h3>
+      <div class="form-grid">
+        <div>
+          <label>Fecha de inicio</label>
+          <input type="datetime-local" name="fecha_inicio" required>
+        </div>
+        <div>
+          <label>Fecha de fin (opcional)</label>
+          <input type="datetime-local" name="fecha_fin">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label>Tipo de mantenimiento</label>
+          <select name="id_tipo_mant" required>
+            <option value="">Seleccione...</option>
+            {% for t in tipos %}
+              <option value="{{ t.id_maestra }}">{{ t.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Estado del mantenimiento</label>
+          <select name="id_estado_mant" required>
+            <option value="">Seleccione...</option>
+            {% for e in estados %}
+              <option value="{{ e.id_maestra }}">{{ e.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label>Equipo</label>
+          <select name="id_equipo" required>
+            <option value="">Seleccione...</option>
+            {% for eq in equipos %}
+              <option value="{{ eq.id_equipo }}">{{ eq.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Supervisor</label>
+          <select name="id_supervisor" required>
+            <option value="">Seleccione...</option>
+            {% for emp in empleados %}
+              <option value="{{ emp.id_empleado }}">{{ emp.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <label>Descripción</label>
+      <textarea name="descripcion" rows="3" placeholder="Detalle breve del mantenimiento..."></textarea>
+
+      <hr class="divider">
+
+      <h3>Asignación del técnico</h3>
+      <label>Técnico responsable</label>
+      <select name="id_empleado" required>
+        <option value="">Seleccione...</option>
+        {% for emp in empleados %}
+          <option value="{{ emp.id_empleado }}">{{ emp.nombre }}</option>
+        {% endfor %}
+      </select>
+
+      <div class="button-container">
+        <button type="submit" class="btn-primary">Guardar mantenimiento</button>
+        <a href="{% url 'mantenimientos' %}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -9,11 +9,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Gestión de Mantenimiento del Cine</h1>
+        <h1>Gestión de Mantenimiento de Equipos en Salas de Cine</h1>
 
-        <div style="margin-bottom: 15px;">
-            <a href="{% url 'vistas' %}" class="btn" style="background-color: #03396c; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">Ir a Vistas Personalizadas</a>
+        <div style="margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 6px;">
+            <a href="{% url 'vistas' %}" class="btn" style="background-color: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">Ir a Vistas Personalizadas</a>
+            <a href="{% url 'crear_mantenimiento_con_asignacion' %}" class="btn" style="background-color: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">
+            Crear nuevo mantenimiento
+            </a>
         </div>
+            
+        
 
         <!-- Contenedor -->
         <div class="tabs">
@@ -162,6 +167,7 @@
 
         </div>
     </div>
+
 
     <script>
         function openTab(evt, tabName) {

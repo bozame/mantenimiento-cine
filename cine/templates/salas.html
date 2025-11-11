@@ -6,28 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Salas</title>
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #ddd;
-        }
-        button {
-            margin-right: 5px;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
@@ -35,7 +13,7 @@
 
     <!-- Listado de Salas -->
     <h2>Listado de Salas</h2>
-    <table>
+    <table border="1" cellspacing="0" cellpadding="5">
         <tr>
             <th>ID</th>
             <th>Número</th>
